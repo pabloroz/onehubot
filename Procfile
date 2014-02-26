@@ -1,1 +1,1 @@
-web: bin/hubot -a campfire -n Jordan
+web: bin/hubot -a slack -n Jordan
