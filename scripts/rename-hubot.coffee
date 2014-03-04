@@ -5,7 +5,7 @@
 #   None
 #
 module.exports = (robot) ->
-  robot.hear /^hubot:? (.+)/i, (msg) ->
+  robot.hear /^hubot3:? (.+)/i, (msg) ->
     response = "Sorry, I'm a diva and only respond to #{robot.name}"
     response += " or #{robot.alias}" if robot.alias
     msg.reply response
