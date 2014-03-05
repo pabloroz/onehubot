@@ -10,9 +10,19 @@
 #   hubot submit www.google.com with description a good search engine
 
 module.exports = (robot) ->
+  categories = [
+    {id: 1, name: "Design"},
+    {id: 2, name: "Development"},
+    {id: 3, name: "Business"},
+    {id: 4, name: "Culture"},
+    {id: 5, name: "Other"}
+  ]
+  categories_option_message = "in which category should I put this article"
+  options_text = categories.map (item) -> "\n #{item.id} - #{item.name}"
+  categories_option_message += options_text.join("")
+
   robot.respond /submit (.*)/i, (msg) ->
     url = msg.match[1].trim()
-    # description = msg.match[2].trim()
     msg.send "ok, got the url"
     msg.reply "whats the title for that url?"
     msg.waitResponse (msg) ->
@@ -20,23 +30,22 @@ module.exports = (robot) ->
       msg.reply "and please tell me whats \"#{title}\" about"
       msg.waitResponse (msg) ->
         abstract = msg.match[1].trim()
-        msg.send "gotcha"
-        msg.reply "in which category should I put this article \n 1 - Design \n 2 - Development \n 3 - Business \n 4 - Culture \n 5 - Other"
+        askCategory(msg)
         msg.waitResponse (msg) ->
-          category = msg.match[1].trim()
-          catetegory_text = ""
-          switch category
-            when "1" then catetegory_text = "Design"
-            when "2" then catetegory_text = "Development"
-            when "3" then catetegory_text = "Business"
-            when "4" then catetegory_text = "Culture"
-            when "5" then catetegory_text = "Other"
-          article = {url: url, title: title, abstract: abstract, category: catetegory_text}
+          selected_category_number = msg.match[1].trim()
+          selected_category = categories.filter (item) -> item.id.toString() == selected_category
+          article = {url: url, title: title, abstract: abstract, category: selected_category.name}
           robot.brain.tribune.push(article)
           msg.send "cool, stored!"
 
   robot.respond /show tribune/i, (msg) ->
-    msg.send robot.brain.tribune
+    tribune_string = robot.brain.tribune.map (e) ->
+      "\nurl: #{e.url}\ntitle: #{e.title}\nabstract: #{e.abstract}\ncategory: #{e.category}"
+    msg.send tribune_string.join("\n")
 
   robot.brain.on 'loaded', ->
     robot.brain.tribune = []
+
+  askCategory = (msg) ->
+    msg.send "gotcha"
+    msg.reply categories_option_message
