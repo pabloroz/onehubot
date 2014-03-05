@@ -33,8 +33,8 @@ module.exports = (robot) ->
         askCategory(msg)
         msg.waitResponse (msg) ->
           selected_category_number = msg.match[1].trim()
-          selected_category = categories.filter (item) -> item.id.toString() == selected_category
-          article = {url: url, title: title, abstract: abstract, category: selected_category.name}
+          selected_category = categories.filter (item) -> item.id.toString() == selected_category_number
+          article = {url: url, title: title, abstract: abstract, category: selected_category[0].name}
           robot.brain.tribune.push(article)
           msg.send "cool, stored!"
 
